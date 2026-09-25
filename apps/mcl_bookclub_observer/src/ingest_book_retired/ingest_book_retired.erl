@@ -12,8 +12,7 @@ init(Args) ->
     {ok, Args}.
 
 handle_event(_Topic, Payload, _Meta, State) ->
-    recorded(on_book_retired_fact_maybe_record:handle(
-               mcl_om_wire:unwrap(Payload))),
+    recorded(on_book_retired_fact_maybe_record:handle(Payload)),
     {noreply, State}.
 
 recorded({record, Book}) ->

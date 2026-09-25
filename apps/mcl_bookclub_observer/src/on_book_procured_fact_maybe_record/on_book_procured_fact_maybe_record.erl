@@ -5,6 +5,10 @@
 %% that arrives late (or replays after a retire) must not resurrect the
 %% book onto the shelf. That consult is the one read this policy makes, and
 %% it is the whole reason the decision lives in its own module.
+%%
+%% Fields are read with mcl_om_wire:field/2 -- the real wire shapes are
+%% `{text, Bin}' keys and values, and a hand-rolled maps:get is the bug
+%% that silently drops every fact.
 -module(on_book_procured_fact_maybe_record).
 
 -export([handle/1]).
@@ -36,11 +40,8 @@ book(BookId, ClubId, Title, Author, At) ->
     #{book_id => BookId, club_id => ClubId, title => Title,
       author => Author, procured_at => At}.
 
-book_id(Fact) -> field(book_id, Fact).
-club_id(Fact) -> field(club_id, Fact).
-title(Fact) -> field(title, Fact).
-author(Fact) -> field(author, Fact).
-procured_at(Fact) -> field(procured_at, Fact).
-
-field(Key, Fact) ->
-    maps:get(Key, Fact, maps:get(atom_to_binary(Key, utf8), Fact, undefined)).
+book_id(Fact) -> mcl_om_wire:field(book_id, Fact).
+club_id(Fact) -> mcl_om_wire:field(club_id, Fact).
+title(Fact) -> mcl_om_wire:field(title, Fact).
+author(Fact) -> mcl_om_wire:field(author, Fact).
+procured_at(Fact) -> mcl_om_wire:field(procured_at, Fact).

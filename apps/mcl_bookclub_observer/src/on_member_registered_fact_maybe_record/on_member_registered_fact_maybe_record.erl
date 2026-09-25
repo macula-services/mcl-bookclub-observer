@@ -5,12 +5,17 @@
 %% retry -- retrying would re-deliver the same malformed payload forever --
 %% it is noise to skip, which is the whole reason the decision has its own
 %% module instead of living inside the listener.
+%%
+%% Fields are read with mcl_om_wire:field/2, which resolves the real wire
+%% shapes in one call: pubsub payload keys arrive as `{text, Bin}' tuples
+%% (the frame decoder does NOT atomize them), and string values arrive
+%% `{text, Bin}'-wrapped; both are unwrapped. A hand-rolled maps:get here
+%% is the bug that silently drops every fact.
 -module(on_member_registered_fact_maybe_record).
 
 -export([handle/1]).
 
-%% @doc {record, Params} for a well-formed fact, skip otherwise. Keys may
-%% be atoms or binaries (the wire atomizes; nothing is trusted).
+%% @doc {record, Params} for a well-formed fact, skip otherwise.
 -spec handle(term()) -> {record, map()} | skip.
 handle(Fact) when is_map(Fact) ->
     admitted(member_id(Fact), club_id(Fact), name(Fact), registered_at(Fact));
@@ -27,10 +32,7 @@ admitted(MemberId, ClubId, Name, At)
 admitted(_, _, _, _) ->
     skip.
 
-member_id(Fact) -> field(member_id, Fact).
-club_id(Fact) -> field(club_id, Fact).
-name(Fact) -> field(name, Fact).
-registered_at(Fact) -> field(registered_at, Fact).
-
-field(Key, Fact) ->
-    maps:get(Key, Fact, maps:get(atom_to_binary(Key, utf8), Fact, undefined)).
+member_id(Fact) -> mcl_om_wire:field(member_id, Fact).
+club_id(Fact) -> mcl_om_wire:field(club_id, Fact).
+name(Fact) -> mcl_om_wire:field(name, Fact).
+registered_at(Fact) -> mcl_om_wire:field(registered_at, Fact).
