@@ -15,8 +15,9 @@
 init(Args) ->
     {ok, Args}.
 
-handle_event(_Topic, Payload, _Meta, State) ->
-    recorded(on_member_registered_fact_maybe_record:handle(Payload)),
+handle_event(_Topic, Payload, Meta, State) ->
+    recorded(on_member_registered_fact_maybe_record:handle(
+               Payload, maps:get(publisher, Meta, undefined))),
     {noreply, State}.
 
 recorded({record, Member}) ->

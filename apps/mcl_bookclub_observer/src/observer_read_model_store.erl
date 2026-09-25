@@ -13,7 +13,7 @@
 -behaviour(gen_server).
 
 -export([start_link/1, record_member/1, record_book/1, retire_book/1,
-         book_status/1, counts/0, last_member/0, q/2, schema/0]).
+         book_status/1, counts/0, clubs/0, last_member/0, q/2, schema/0]).
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
 
 -record(state, {
@@ -27,11 +27,14 @@ schema() ->
     ["CREATE TABLE IF NOT EXISTS members ("
      " member_id     TEXT PRIMARY KEY,"
      " club_id       TEXT NOT NULL,"
+     " club_name     TEXT NOT NULL,"
      " name          TEXT NOT NULL,"
-     " registered_at INTEGER NOT NULL)",
+     " registered_at INTEGER NOT NULL,"
+     " publisher     TEXT NOT NULL)",
      "CREATE TABLE IF NOT EXISTS books ("
      " book_id     TEXT PRIMARY KEY,"
      " club_id     TEXT NOT NULL,"
+     " club_name   TEXT NOT NULL,"
      " title       TEXT NOT NULL,"
      " author      TEXT NOT NULL,"
      " status      TEXT NOT NULL,"
@@ -71,6 +74,14 @@ book_status(BookId) ->
 counts() ->
     gen_server:call(?MODULE, counts, 5000).
 
+%% @doc Per-club rollup, one map per observed club, sorted by club id: the
+%% club's name, its membership, its shelf counts, its most recent
+%% registration, and the node that published its facts (hex) -- the node a
+%% verification call pins.
+-spec clubs() -> {ok, [map()]} | {error, term()}.
+clubs() ->
+    gen_server:call(?MODULE, clubs, 5000).
+
 %% @doc The most recently registered member, or none.
 -spec last_member() -> map() | none | {error, term()}.
 last_member() ->
@@ -100,25 +111,30 @@ schemed(_Conn, {error, Reason}) ->
     {stop, {schema_failed, Reason}}.
 
 handle_call({record_member, #{member_id := MemberId, club_id := ClubId,
-                              name := Name, registered_at := At}},
+                              club_name := ClubName, name := Name,
+                              registered_at := At, publisher := Publisher}},
             _From, #state{conn = Conn} = State) ->
     {reply,
      do_exec(Conn,
-             "INSERT OR REPLACE INTO members (member_id, club_id, name, registered_at)"
-             " VALUES (?, ?, ?, ?)",
-             [MemberId, ClubId, Name, At]),
+             "INSERT OR REPLACE INTO members"
+             " (member_id, club_id, club_name, name, registered_at, publisher)"
+             " VALUES (?, ?, ?, ?, ?, ?)",
+             [MemberId, ClubId, ClubName, Name, At, publisher_hex(Publisher)]),
      State};
 handle_call({record_book, #{book_id := BookId, club_id := ClubId,
+                            club_name := ClubName,
                             title := Title, author := Author, procured_at := At}},
             _From, #state{conn = Conn} = State) ->
     {reply,
      do_exec(Conn,
              "INSERT OR REPLACE INTO books"
-             " (book_id, club_id, title, author, status, procured_at, retired_at, retired_by)"
-             " VALUES (?, ?, ?, ?, 'on_shelf', ?, NULL, NULL)",
-             [BookId, ClubId, Title, Author, At]),
+             " (book_id, club_id, club_name, title, author, status, procured_at,"
+             "  retired_at, retired_by)"
+             " VALUES (?, ?, ?, ?, ?, 'on_shelf', ?, NULL, NULL)",
+             [BookId, ClubId, ClubName, Title, Author, At]),
      State};
 handle_call({retire_book, #{book_id := BookId, club_id := ClubId,
+                            club_name := ClubName,
                             title := Title, author := Author,
                             procured_at := ProcuredAt,
                             retired_by := RetiredBy, retired_at := RetiredAt}},
@@ -126,14 +142,17 @@ handle_call({retire_book, #{book_id := BookId, club_id := ClubId,
     {reply,
      do_exec(Conn,
              "INSERT OR REPLACE INTO books"
-             " (book_id, club_id, title, author, status, procured_at, retired_at, retired_by)"
-             " VALUES (?, ?, ?, ?, 'retired', ?, ?, ?)",
-             [BookId, ClubId, Title, Author, ProcuredAt, RetiredAt, RetiredBy]),
+             " (book_id, club_id, club_name, title, author, status, procured_at,"
+             "  retired_at, retired_by)"
+             " VALUES (?, ?, ?, ?, ?, 'retired', ?, ?, ?)",
+             [BookId, ClubId, ClubName, Title, Author, ProcuredAt, RetiredAt, RetiredBy]),
      State};
 handle_call({book_status, BookId}, _From, #state{conn = Conn} = State) ->
     {reply, book_status_q(Conn, BookId), State};
 handle_call(counts, _From, #state{conn = Conn} = State) ->
     {reply, counts_q(Conn), State};
+handle_call(clubs, _From, #state{conn = Conn} = State) ->
+    {reply, clubs_q(Conn), State};
 handle_call(last_member, _From, #state{conn = Conn} = State) ->
     {reply, last_member_q(Conn), State};
 handle_call({q, Sql, Args}, _From, #state{conn = Conn} = State) ->
@@ -171,6 +190,13 @@ do_exec(Conn, Sql, Args) ->
         Rows -> {error, {unexpected_rows, Rows}}
     end.
 
+%% The fact's publisher node id, hex-encoded for the TEXT column; <<>> when
+%% the fact arrived without one (the verification then reports unknown).
+publisher_hex(Publisher) when is_binary(Publisher) ->
+    binary:encode_hex(Publisher);
+publisher_hex(_) ->
+    <<>>.
+
 book_status_q(Conn, BookId) ->
     case esqlite3:q(Conn, "SELECT status FROM books WHERE book_id = ?", [BookId]) of
         [[Status] | _] -> {ok, Status};
@@ -197,3 +223,43 @@ last_member_q(Conn) ->
         [] -> none;
         {error, Reason} -> {error, Reason}
     end.
+
+clubs_q(Conn) ->
+    case esqlite3:q(Conn,
+                    "SELECT club_id, club_name, name, registered_at, publisher"
+                    " FROM members ORDER BY registered_at DESC",
+                    []) of
+        {error, _} = Error ->
+            {error, Error};
+        Members ->
+            case {esqlite3:q(Conn, "SELECT club_id, COUNT(*) FROM books"
+                              " WHERE status = 'on_shelf' GROUP BY club_id", []),
+                  esqlite3:q(Conn, "SELECT club_id, COUNT(*) FROM books"
+                              " WHERE status = 'retired' GROUP BY club_id", [])} of
+                {{error, _} = Error, _} -> {error, Error};
+                {_, {error, _} = Error} -> {error, Error};
+                {OnShelf, Retired} ->
+                    {ok, rollup(Members, pairs(OnShelf), pairs(Retired))}
+            end
+    end.
+
+pairs(Rows) ->
+    maps:from_list([{ClubId, Count} || [ClubId, Count] <- Rows]).
+
+rollup(Members, OnShelf, Retired) ->
+    Acc = lists:foldl(
+            fun([ClubId, ClubName, Name, At, Publisher], A) ->
+                    maps:update_with(ClubId,
+                                     fun(C) -> C#{members => maps:get(members, C) + 1} end,
+                                     #{club_id => ClubId,
+                                       club_name => ClubName,
+                                       members => 1,
+                                       last_registered => #{name => Name, registered_at => At},
+                                       publisher => Publisher},
+                                     A)
+            end, #{}, Members),
+    lists:sort(
+      fun(A, B) -> maps:get(club_id, A) < maps:get(club_id, B) end,
+      [C#{books_on_shelf => maps:get(ClubId, OnShelf, 0),
+          books_retired => maps:get(ClubId, Retired, 0)}
+       || {ClubId, C} <- maps:to_list(Acc)]).

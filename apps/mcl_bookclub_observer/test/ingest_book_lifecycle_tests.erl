@@ -41,6 +41,7 @@ a_retired_fact_arriving_first_is_not_resurrected() ->
 
 a_malformed_retired_fact_is_skipped() ->
     Bad = #{book_id => <<"book-cc">>, club_id => <<"bookclub-cc">>,
+            club_name => <<"The Crooked Shelf">>,
             title => <<"T">>, author => <<"A">>, procured_at => 1,
             retired_by => <<"raf">>},
     {noreply, _} = ingest_book_retired:handle_event(<<"t">>, Bad, #{}, ok),
@@ -53,10 +54,12 @@ a_malformed_retired_fact_is_skipped() ->
 
 procured(BookId) ->
     #{book_id => BookId, club_id => <<"bookclub-aa">>,
+      club_name => <<"The Crooked Shelf">>,
       title => <<"Project Hail Mary">>, author => <<"Andy Weir">>,
       procured_at => 100}.
 
 retired(BookId) ->
     #{book_id => BookId, club_id => <<"bookclub-aa">>,
+      club_name => <<"The Crooked Shelf">>,
       title => <<"Project Hail Mary">>, author => <<"Andy Weir">>,
       procured_at => 100, retired_by => <<"raf">>, retired_at => 200}.
