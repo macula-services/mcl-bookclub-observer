@@ -45,27 +45,16 @@ verify_club(#{publisher := PublisherHex} = Club) ->
 verified_call(ClubId, Publisher) ->
     verdict(pinned_call(ClubId, Publisher)).
 
-%% The /5 call is the pin, carried by mcl_om >= 0.28.2; until that release
-%% is published the locked 0.28.1 has only /4. The static call below is
-%% therefore a forward reference -- suppressed here, deliberately, and the
-%% runtime gate is function_exported/3.
--dialyzer({nowarn_function, pinned_call/2}).
-
+%% The /5 call is the pin (mcl_om 0.28.2): the advertiser opt dials ONLY
+%% the club's own node. The many-club model's answer to "which club": an
+%% unpinned call reaches whoever the DHT lists first, and a club that does
+%% not own the asked id answers not_found -- a valid answer, not a failover
+%% signal -- so with two clubs under one procedure, every verified club
+%% would show "no".
 pinned_call(ClubId, Publisher) ->
-    case erlang:function_exported(mcl_om, call_capability, 5) of
-        true ->
-            %% mcl_om >= 0.28.2: the advertiser pin exists -- only the club's
-            %% own node is dialed.
-            mcl_om:call_capability(?BOOKCLUB_ORG, <<"get_bookclub_by_id">>,
-                                   #{club_id => ClubId}, ?TIMEOUT_MS,
-                                   #{advertiser => Publisher});
-        false ->
-            %% mcl_om < 0.28.2: no pin exists yet; call unpinned until the
-            %% release carrying it is published. With one club on the mesh
-            %% that is correct; the pin is what makes a thousand correct.
-            mcl_om:call_capability(?BOOKCLUB_ORG, <<"get_bookclub_by_id">>,
-                                   #{club_id => ClubId}, ?TIMEOUT_MS)
-    end.
+    mcl_om:call_capability(?BOOKCLUB_ORG, <<"get_bookclub_by_id">>,
+                           #{club_id => ClubId}, ?TIMEOUT_MS,
+                           #{advertiser => Publisher}).
 
 verdict({ok, _}) -> yes;
 verdict({error, _}) -> no.

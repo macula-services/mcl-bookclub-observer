@@ -56,11 +56,15 @@ the_scoreboard_counts_what_was_observed_per_club() ->
 the_capability_verifies_each_club_pinned_to_its_publisher() ->
     Publisher = <<7:256>>,
     member(<<"member-aa">>, <<"bookclub-aa">>, <<"The Crooked Shelf">>, <<"Bea">>, 42, Publisher),
-    %% The observer's pin branch activates when mcl_om 0.28.2 ships
-    %% (function_exported gate); meck cannot stub the /5 arity against the
-    %% locked 0.28.1, so this exercises the unpinned path -- the pin's own
-    %% logic is unit-tested in mcl_om (pinned_providers/2).
-    ok = meck_mesh(fun(_Org, _Name, #{club_id := _}, _Timeout) -> {ok, #{}} end),
+    %% mcl_om >= 0.28.2: the /5 pin branch is live, so the stub must be the
+    %% /5 arity -- and the test asserts the call IS pinned to the publisher
+    %% the fact named. An unpinned call reaches whichever node the DHT
+    %% lists first, and with a second club under the same org the wrong
+    %% node answers not_found.
+    ok = meck_mesh(fun(_Org, _Name, #{club_id := _}, _Timeout, #{advertiser := Adv}) ->
+                           ?assertEqual(Publisher, Adv),
+                           {ok, #{}}
+                   end),
     try
         {reply, Wire, undefined} =
             mcl_bookclub_observer_get_scoreboard:handle_request(#{}, undefined),
@@ -72,7 +76,7 @@ the_capability_verifies_each_club_pinned_to_its_publisher() ->
     end.
 
 the_capability_reports_unknown_with_no_club_observed() ->
-    ok = meck_mesh(fun(_Org, _Name, _Payload, _Timeout) -> {ok, #{}} end),
+    ok = meck_mesh(fun(_Org, _Name, _Payload, _Timeout, _Opts) -> {ok, #{}} end),
     try
         {reply, Wire, undefined} =
             mcl_bookclub_observer_get_scoreboard:handle_request(#{}, undefined),
@@ -83,7 +87,7 @@ the_capability_reports_unknown_with_no_club_observed() ->
 
 the_capability_reports_no_when_a_club_refuses() ->
     member(<<"member-aa">>, <<"bookclub-aa">>, <<"The Crooked Shelf">>, <<"Bea">>, 42, <<7:256>>),
-    ok = meck_mesh(fun(_Org, _Name, _Payload, _Timeout) -> {error, not_found} end),
+    ok = meck_mesh(fun(_Org, _Name, _Payload, _Timeout, _Opts) -> {error, not_found} end),
     try
         {reply, Wire, undefined} =
             mcl_bookclub_observer_get_scoreboard:handle_request(#{}, undefined),

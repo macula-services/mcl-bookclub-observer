@@ -225,41 +225,52 @@ last_member_q(Conn) ->
     end.
 
 clubs_q(Conn) ->
-    case esqlite3:q(Conn,
-                    "SELECT club_id, club_name, name, registered_at, publisher"
-                    " FROM members ORDER BY registered_at DESC",
-                    []) of
+    case members_q(Conn) of
         {error, _} = Error ->
             {error, Error};
         Members ->
-            case {esqlite3:q(Conn, "SELECT club_id, COUNT(*) FROM books"
-                              " WHERE status = 'on_shelf' GROUP BY club_id", []),
-                  esqlite3:q(Conn, "SELECT club_id, COUNT(*) FROM books"
-                              " WHERE status = 'retired' GROUP BY club_id", [])} of
-                {{error, _} = Error, _} -> {error, Error};
-                {_, {error, _} = Error} -> {error, Error};
-                {OnShelf, Retired} ->
-                    {ok, rollup(Members, pairs(OnShelf), pairs(Retired))}
-            end
+            clubs_q_with_members(Conn, Members)
     end.
+
+clubs_q_with_members(Conn, Members) ->
+    case shelf_counts_q(Conn) of
+        {{error, _} = Error, _} ->
+            {error, Error};
+        {_, {error, _} = Error} ->
+            {error, Error};
+        {OnShelf, Retired} ->
+            {ok, rollup(Members, pairs(OnShelf), pairs(Retired))}
+    end.
+
+members_q(Conn) ->
+    esqlite3:q(Conn,
+               "SELECT club_id, club_name, name, registered_at, publisher"
+               " FROM members ORDER BY registered_at DESC",
+               []).
+
+shelf_counts_q(Conn) ->
+    {esqlite3:q(Conn, "SELECT club_id, COUNT(*) FROM books"
+                " WHERE status = 'on_shelf' GROUP BY club_id", []),
+     esqlite3:q(Conn, "SELECT club_id, COUNT(*) FROM books"
+                " WHERE status = 'retired' GROUP BY club_id", [])}.
 
 pairs(Rows) ->
     maps:from_list([{ClubId, Count} || [ClubId, Count] <- Rows]).
 
 rollup(Members, OnShelf, Retired) ->
-    Acc = lists:foldl(
-            fun([ClubId, ClubName, Name, At, Publisher], A) ->
-                    maps:update_with(ClubId,
-                                     fun(C) -> C#{members => maps:get(members, C) + 1} end,
-                                     #{club_id => ClubId,
-                                       club_name => ClubName,
-                                       members => 1,
-                                       last_registered => #{name => Name, registered_at => At},
-                                       publisher => Publisher},
-                                     A)
-            end, #{}, Members),
+    Acc = lists:foldl(fun bump/2, #{}, Members),
     lists:sort(
       fun(A, B) -> maps:get(club_id, A) < maps:get(club_id, B) end,
       [C#{books_on_shelf => maps:get(ClubId, OnShelf, 0),
           books_retired => maps:get(ClubId, Retired, 0)}
        || {ClubId, C} <- maps:to_list(Acc)]).
+
+bump([ClubId, ClubName, Name, At, Publisher], A) ->
+    maps:update_with(ClubId,
+                     fun(C) -> C#{members => maps:get(members, C) + 1} end,
+                     #{club_id => ClubId,
+                       club_name => ClubName,
+                       members => 1,
+                       last_registered => #{name => Name, registered_at => At},
+                       publisher => Publisher},
+                     A).
