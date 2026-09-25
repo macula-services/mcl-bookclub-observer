@@ -1,0 +1,25 @@
+%% Substituted by relx at boot; every ${VAR} must resolve or the node will not
+%% start with a malformed term. That is the correct failure: a service with a
+%% half-configured realm announces itself where nobody can attribute it.
+[
+    {mcl_om, [
+        %% The node identity, on the mounted secrets volume.
+        {identity_key_path, "/etc/mcl/secrets/identity.key"},
+        {health_port,       ${MCL_HEALTH_PORT}},
+        {capability_topic,  <<"_mesh.cap.">>},
+        %% THE REALM IS AN APPLICATION ENV, NOT A SHELL VARIABLE, and this
+        %% file is the only place the two meet.
+        {realm,             <<"${MCL_REALM}">>},
+        %% ONE ORG PER SERVICE, NAMED AFTER THE REPOSITORY: the `Org' in every
+        %% procedure it offers, and the org the realm's grant names.
+        {org,               <<"mcl-bookclub-observer">>},
+        %% THE TRUST ANCHOR, AND IT IS NOT OPTIONAL: the realm's public signing
+        %% key. Public material, not a secret.
+        {realm_key,         <<"${MCL_REALM_KEY}">>}
+    ]},
+    %% THE PQ CRYPTO PROFILE, WITHOUT WHICH THIS NODE DOES NOT PEER.
+    {macula, [
+        {crypto_profile, pq_hybrid}
+    ]},
+    {kernel, [{logger_level, info}]}
+].

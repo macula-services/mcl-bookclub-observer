@@ -1,0 +1,20 @@
+{application, mcl_bookclub_observer, [
+    {description, "The consumer half of mcl-bookclub's facts: a scoreboard over the mesh."},
+    {vsn, "0.1.0"},
+    {registered, [mcl_bookclub_observer_sup, observer_read_model_store]},
+    {mod, {mcl_bookclub_observer_app, []}},
+    {applications, [
+        kernel,
+        stdlib,
+        crypto,
+        %% Mesh SDK, realm identity, capabilities, health, and the
+        %% subscriptions/0 wiring.
+        mcl_om,
+        %% The read model.
+        esqlite
+    ]},
+    {env, []},
+    {modules, []},
+    {licenses, ["Apache-2.0"]},
+    {links, [{"GitHub", "https://github.com/macula-services/mcl-bookclub-observer"}]}
+]}.

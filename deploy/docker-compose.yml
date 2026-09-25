@@ -1,0 +1,45 @@
+# mcl-bookclub-observer — how to run this service.
+#
+# Runnable as-is. It carries what the SERVICE knows about itself: its image,
+# its port, the environment variables its own code reads, and its health check.
+#
+#   MCL_REALM=<64-hex> \
+#     MCL_REALM_KEY=<hex of the realm's public signing key> \
+#     MACULA_STATION_SEEDS=station.example:4433 \
+#     MACULA_STATION_NODE_IDS=<64-hex node id of that station> \
+#     docker compose -p mcl-bookclub-observer -f deploy/docker-compose.yml up -d
+
+services:
+  mcl-bookclub-observer:
+    image: ghcr.io/macula-services/mcl-bookclub-observer:latest
+    container_name: mcl-bookclub-observer
+    restart: unless-stopped
+    # HOST NETWORKING IS NOT LAZINESS. macula stations are reachable over IPv6
+    # only, and a default docker bridge has no IPv6.
+    network_mode: host
+    volumes:
+      # ⚠ THE SERVICE'S IDENTITY LIVES HERE. Without the mount, every recreate
+      # mints a new node id while the service looks healthy.
+      - secrets:/etc/mcl/secrets
+      # ⚠ REQUIRED: the sqlite read model. Without the mount everything
+      # observed is forgotten on every recreate. On a bulk drive.
+      - ${MCL_BOOKCLUB_OBSERVER_DATA:-/bulk0/mcl-bookclub-observer}:/data
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    environment:
+      - MCL_REALM=${MCL_REALM:?set MCL_REALM to the 64-hex realm tag}
+      - MCL_REALM_KEY=${MCL_REALM_KEY:?set MCL_REALM_KEY to the hex-encoded public realm signing key}
+      - MACULA_STATION_SEEDS=${MACULA_STATION_SEEDS:?set MACULA_STATION_SEEDS to "host[:port][,host[:port]...]"}
+      - MACULA_STATION_NODE_IDS=${MACULA_STATION_NODE_IDS:?set MACULA_STATION_NODE_IDS to the matching 64-hex node ids, comma-separated}
+      - MCL_NODE_NAME=mcl_bookclub_observer
+      - MCL_NODE_HOST=127.0.0.1
+      - MCL_COOKIE=${MCL_COOKIE:?set MCL_COOKIE in ~/.macula/secrets/mcl-bookclub-observer.env}
+      # Host networking means a port already bound on this host fails SILENTLY.
+      - MCL_HEALTH_PORT=8453
+      - MCL_SERVICE_NAME=mcl-bookclub-observer
+      - MCL_BOX=${MCL_BOX:-}
+      - MCL_DATA_DIR=/data
+
+volumes:
+  secrets:
+    name: mcl-bookclub-observer-secrets
