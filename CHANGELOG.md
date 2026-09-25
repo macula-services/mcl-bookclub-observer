@@ -14,3 +14,6 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   listener -> policy -> projection shape, and serves `get_scoreboard`.
 - The scoreboard capability verifies the bookclub over the mesh
   (`mcl-bookclub/get_bookclub_by_id`) and reports the answer.
+- The scoreboard groups by club and pins its verification call to the
+  node that published each club's facts (the many-club model; the pin
+  activates with mcl_om 0.28.2).
