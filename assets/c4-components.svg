@@ -14,6 +14,7 @@
 .b-sys { fill: #F5E9CC; stroke: #A56F0A; stroke-width: 2; }
 .b-per { fill: #E3EBF2; stroke: #3B5B7A; stroke-width: 1.25; }
 .b-mac { fill: #E6E4EE; stroke: #5E5A78; stroke-width: 1.25; }
+.b-lib { fill: #E7F0E8; stroke: #4A7A55; stroke-width: 1.25; }
 .b-ext { fill: #ECEFED; stroke: #8A9791; stroke-width: 1.25; }
 .b-cmp { fill: #FFFFFF; stroke: #8A9791; stroke-width: 1.25; }
 .b-later { fill: none; stroke: #8A9791; stroke-width: 1.25; stroke-dasharray: 5 4; }
@@ -30,6 +31,7 @@
 .b-sys { fill: #3A2E13; stroke: #E3AA3C; }
 .b-per { fill: #1D2A36; stroke: #8EB4D8; }
 .b-mac { fill: #26243A; stroke: #A9A4C8; }
+.b-lib { fill: #1A241C; stroke: #8FBE9B; }
 .b-ext { fill: #1C2421; stroke: #7D8B85; }
 .b-cmp { fill: #171F1C; stroke: #7D8B85; }
 .b-later { stroke: #7D8B85; }
@@ -73,14 +75,15 @@
 <text class="t-code" x="508" y="300">ingest_member_registered</text>
 <text class="t-type" x="508" y="318">[macula_subscriber, three modules]</text>
 <text class="t-desc" x="508" y="342">with ingest_book_procured and</text>
-<text class="t-desc" x="508" y="358">ingest_book_retired: unwrap the fact with</text>
-<text class="t-desc" x="508" y="374">mcl_om_wire:field/2 and hand it to policy</text>
+<text class="t-desc" x="508" y="358">ingest_book_retired: hand the payload</text>
+<text class="t-desc" x="508" y="374">to the policy, then write its decision</text>
 <rect class="b-cmp" x="952" y="272" width="340" height="136" rx="10"/>
 <text class="t-code" x="968" y="300">on_book_procured_fact_maybe_record</text>
 <text class="t-type" x="968" y="318">[policy, three modules]</text>
 <text class="t-desc" x="968" y="342">with on_member_registered_ and</text>
 <text class="t-desc" x="968" y="358">on_book_retired_ fact_maybe_record:</text>
-<text class="t-desc" x="968" y="374">the admit/supersede decision, then writes</text>
+<text class="t-desc" x="968" y="374">unwrap with mcl_om_wire:field/2,</text>
+<text class="t-desc" x="968" y="390">then decide admit or supersede</text>
 <rect class="b-cmp" x="32" y="468" width="340" height="180" rx="10"/>
 <text class="t-code" x="48" y="496">get_scoreboard</text>
 <text class="t-type" x="48" y="514">[pure query desk]</text>
@@ -106,19 +109,19 @@
 <text class="t-desc" x="968" y="586">mcl_om supervises those from</text>
 <text class="t-desc" x="968" y="602">subscriptions/0</text>
 <text class="t-desc" x="32" y="720">The libraries the release links:</text>
-<rect class="b-mac" x="32" y="736" width="400" height="136" rx="10"/>
+<rect class="b-lib" x="32" y="736" width="400" height="136" rx="10"/>
 <text class="t-code" x="48" y="764">mcl_om</text>
 <text class="t-type" x="48" y="782">[library, ~&gt; 1.4]</text>
 <text class="t-desc" x="48" y="806">boot/1: node key, realm join, QUIC pool,</text>
-<text class="t-desc" x="48" y="822">capability registration, health, and wiring</text>
-<text class="t-desc" x="48" y="838">subscriptions/0 into a supervised tree</text>
-<rect class="b-mac" x="452" y="736" width="400" height="136" rx="10"/>
+<text class="t-desc" x="48" y="822">capabilities, health, subscriptions/0, and</text>
+<text class="t-desc" x="48" y="838">call_capability/5 with the advertiser pin</text>
+<rect class="b-lib" x="452" y="736" width="400" height="136" rx="10"/>
 <text class="t-code" x="468" y="764">macula</text>
 <text class="t-type" x="468" y="782">[library, ~&gt; 16.0]</text>
-<text class="t-desc" x="468" y="806">QUIC transport, the subscriber that receives</text>
-<text class="t-desc" x="468" y="822">a fact, and call_capability/5 with the</text>
-<text class="t-desc" x="468" y="838">advertiser pin the verification uses</text>
-<rect class="b-mac" x="872" y="736" width="400" height="136" rx="10"/>
+<text class="t-desc" x="468" y="806">QUIC transport and the subscriber that</text>
+<text class="t-desc" x="468" y="822">receives a fact; the advertiser-pinned</text>
+<text class="t-desc" x="468" y="838">call is mcl_om:call_capability/5</text>
+<rect class="b-lib" x="872" y="736" width="400" height="136" rx="10"/>
 <text class="t-code" x="888" y="764">esqlite</text>
 <text class="t-type" x="888" y="782">[library, ~&gt; 0.9]</text>
 <text class="t-desc" x="888" y="806">one sqlite file, one connection owned by</text>
@@ -131,9 +134,9 @@
 <text class="t-desc" x="48" y="998">without the volume a recreate forgets everything observed</text>
 <rect class="b-ext" x="652" y="912" width="640" height="104" rx="10"/>
 <text class="t-code" x="668" y="940">MCL_COOKIE</text>
-<text class="t-type" x="668" y="958">[environment, from the operator's secrets]</text>
-<text class="t-desc" x="668" y="982">read from ~/.macula/secrets/mcl-bookclub-observer.env by the compose</text>
-<text class="t-desc" x="668" y="998">file, which refuses to start without it; the node name is fixed</text>
+<text class="t-type" x="668" y="958">[environment, supplied by the operator]</text>
+<text class="t-desc" x="668" y="982">supplied by the environment; the compose file refuses to start without it;</text>
+<text class="t-desc" x="668" y="998">the node name is fixed</text>
 <rect class="b-ext" x="32" y="1044" width="1260" height="104" rx="10"/>
 <text class="t-code" x="48" y="1072">MCL_REALM, MCL_REALM_KEY, MACULA_STATION_SEEDS, MACULA_STATION_NODE_IDS</text>
 <text class="t-type" x="48" y="1090">[environment, config/sys.config.src and deploy/docker-compose.yml]</text>
@@ -161,10 +164,12 @@
 <text class="t-leg" x="140.8" y="1192">Person</text>
 <rect class="b-mac" x="184.39999999999998" y="1180" width="22" height="14" rx="3"/>
 <text class="t-leg" x="214.39999999999998" y="1192">Macula infrastructure</text>
-<rect class="b-ext" x="357.0" y="1180" width="22" height="14" rx="3"/>
-<text class="t-leg" x="387.0" y="1192">External system</text>
-<rect class="b-cmp" x="490.0" y="1180" width="22" height="14" rx="3"/>
-<text class="t-leg" x="520.0" y="1192">Container or component</text>
-<rect class="bound" x="669.2" y="1180" width="22" height="14" rx="3"/>
-<text class="t-leg" x="699.2" y="1192">Boundary</text>
+<rect class="b-lib" x="357.0" y="1180" width="22" height="14" rx="3"/>
+<text class="t-leg" x="387.0" y="1192">Library</text>
+<rect class="b-ext" x="437.2" y="1180" width="22" height="14" rx="3"/>
+<text class="t-leg" x="467.2" y="1192">External system</text>
+<rect class="b-cmp" x="570.2" y="1180" width="22" height="14" rx="3"/>
+<text class="t-leg" x="600.2" y="1192">Container or component</text>
+<rect class="bound" x="749.4000000000001" y="1180" width="22" height="14" rx="3"/>
+<text class="t-leg" x="779.4000000000001" y="1192">Boundary</text>
 </svg>

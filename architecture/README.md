@@ -37,16 +37,16 @@ delivers after a loss.
 | `mcl_bookclub_observer_app` | OTP application | One call: `mcl_om:boot/1` with the service module. No store is opened, because there is no store to open |
 | `mcl_bookclub_observer_service` | the `mcl_om_service` behaviour | The six callbacks, plus `subscriptions/0`: the three topic triples `mcl_om` wires into its supervised pubsub tree. `health/0` pings the read model store |
 | `mcl_bookclub_observer_get_scoreboard` | `macula_response` provider | Answers from the local read model, then verifies each club by calling `get_bookclub_by_id`, pinned with the `advertiser` opt to the node that published that club's facts |
-| `ingest_member_registered`, `ingest_book_procured`, `ingest_book_retired` | `macula_subscriber`, three modules | Unwrap the fact with `mcl_om_wire:field/2`, hand it to the matching policy, and act on the decision |
-| `on_member_registered_fact_maybe_record`, `on_book_procured_fact_maybe_record`, `on_book_retired_fact_maybe_record` | policy, three modules | The admit/supersede decision. The procured policy is the reason this is its own module: it consults `book_status/1` so a late procurement cannot resurrect a retired book |
+| `ingest_member_registered`, `ingest_book_procured`, `ingest_book_retired` | `macula_subscriber`, three modules | Hand the payload to the matching policy, and write the decision it returns |
+| `on_member_registered_fact_maybe_record`, `on_book_procured_fact_maybe_record`, `on_book_retired_fact_maybe_record` | policy, three modules | Read the fields with `mcl_om_wire:field/2` and make the admit/supersede decision. The procured policy is the reason this is its own module: it consults `book_status/1` so a late procurement cannot resurrect a retired book |
 | `get_scoreboard` | pure query desk | `counts/0` and `clubs/0` over the store: members, books on shelf, books retired, and one row per club with its name, counts, last registration and publisher |
 | `observer_read_model_store` | `gen_server`, esqlite | One connection, owned by this process. Schema `members` and `books`. Writes are `INSERT OR REPLACE` keyed on the fact's natural key, because a fact carries no `event_id` or `version` to dedupe on |
 | `mcl_bookclub_observer_sup` | supervisor, `one_for_one` | One child, `observer_read_model_store`, started before anything reads it. The mesh subscribers are not here: `mcl_om` supervises those from `subscriptions/0` |
-| `mcl_om` | library, `~> 1.4` | `boot/1`: node key, realm join, QUIC pool, capability registration, health, and the `subscriptions/0` wiring |
-| `macula` | library, `~> 16.0` | QUIC transport, the subscriber that receives a fact, and `call_capability/5` with the advertiser pin the verification uses |
+| `mcl_om` | library, `~> 1.4` | `boot/1`: node key, realm join, QUIC pool, capability registration, health, the `subscriptions/0` wiring, and `call_capability/5` with the advertiser pin the verification uses |
+| `macula` | library, `~> 16.0` | QUIC transport and the subscriber that receives a fact |
 | `esqlite` | library, `~> 0.9` | One sqlite file, one connection owned by the store process; a NIF connection belongs to the process that opened it |
 | `MCL_DATA_DIR` | environment | `/data` in the image. The read model is `<dir>/bookclub_observer.sqlite3`; without the volume a recreate forgets everything observed |
-| `MCL_COOKIE` | environment | Read from `~/.macula/secrets/mcl-bookclub-observer.env` by the compose file, which refuses to start without it |
+| `MCL_COOKIE` | environment | Supplied by the environment; the compose file refuses to start without it |
 | `MCL_REALM`, `MCL_REALM_KEY`, `MACULA_STATION_SEEDS`, `MACULA_STATION_NODE_IDS` | environment | Substituted by relx at boot. The compose file refuses to start without all four, so a half-configured node never announces itself |
 
 The three topics are pinned by a test to the strings `mcl_bookclub_facts` builds

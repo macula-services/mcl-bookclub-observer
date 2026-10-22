@@ -31,6 +31,7 @@ KINDS = {
     "b-sys": ("#F5E9CC", "#A56F0A", "#3A2E13", "#E3AA3C"),   # in scope
     "b-per": ("#E3EBF2", "#3B5B7A", "#1D2A36", "#8EB4D8"),   # person
     "b-mac": ("#E6E4EE", "#5E5A78", "#26243A", "#A9A4C8"),   # Macula infrastructure
+    "b-lib": ("#E7F0E8", "#4A7A55", "#1A241C", "#8FBE9B"),   # library
     "b-ext": ("#ECEFED", "#8A9791", "#1C2421", "#7D8B85"),   # external system
     "b-cmp": ("#FFFFFF", "#8A9791", "#171F1C", "#7D8B85"),   # component or container
 }
@@ -75,7 +76,7 @@ DEFS = ('<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth=
         'orient="auto-start-reverse"><path class="arrowhead" d="M0 0L10 5L0 10z"/></marker></defs>')
 
 LEGEND = [("b-sys", "In scope"), ("b-per", "Person"), ("b-mac", "Macula infrastructure"),
-          ("b-ext", "External system"), ("b-cmp", "Container or component")]
+          ("b-lib", "Library"), ("b-ext", "External system"), ("b-cmp", "Container or component")]
 BOUNDARY = ("bound", "Boundary")
 
 
@@ -192,12 +193,13 @@ def components():
            "bookclub, pinned to the fact's publisher"], code=True)
     d.box("b-cmp", 492, 272, 340, 136, "ingest_member_registered", "[macula_subscriber, three modules]",
           ["with ingest_book_procured and",
-           "ingest_book_retired: unwrap the fact with",
-           "mcl_om_wire:field/2 and hand it to policy"], code=True)
+           "ingest_book_retired: hand the payload",
+           "to the policy, then write its decision"], code=True)
     d.box("b-cmp", 952, 272, 340, 136, "on_book_procured_fact_maybe_record", "[policy, three modules]",
           ["with on_member_registered_ and",
            "on_book_retired_ fact_maybe_record:",
-           "the admit/supersede decision, then writes"], code=True)
+           "unwrap with mcl_om_wire:field/2,",
+           "then decide admit or supersede"], code=True)
     # Row 3: the answer, the store, its supervisor.
     d.box("b-cmp", 32, 468, 340, 180, "get_scoreboard", "[pure query desk]",
           ["counts/0 and clubs/0 over the store:",
@@ -219,15 +221,15 @@ def components():
            "subscriptions/0"], code=True)
     # The libraries.
     d.text("t-desc", 32, 720, "The libraries the release links:")
-    d.box("b-mac", 32, 736, 400, 136, "mcl_om", "[library, ~> 1.4]",
+    d.box("b-lib", 32, 736, 400, 136, "mcl_om", "[library, ~> 1.4]",
           ["boot/1: node key, realm join, QUIC pool,",
-           "capability registration, health, and wiring",
-           "subscriptions/0 into a supervised tree"], code=True)
-    d.box("b-mac", 452, 736, 400, 136, "macula", "[library, ~> 16.0]",
-          ["QUIC transport, the subscriber that receives",
-           "a fact, and call_capability/5 with the",
-           "advertiser pin the verification uses"], code=True)
-    d.box("b-mac", 872, 736, 400, 136, "esqlite", "[library, ~> 0.9]",
+           "capabilities, health, subscriptions/0, and",
+           "call_capability/5 with the advertiser pin"], code=True)
+    d.box("b-lib", 452, 736, 400, 136, "macula", "[library, ~> 16.0]",
+          ["QUIC transport and the subscriber that",
+           "receives a fact; the advertiser-pinned",
+           "call is mcl_om:call_capability/5"], code=True)
+    d.box("b-lib", 872, 736, 400, 136, "esqlite", "[library, ~> 0.9]",
           ["one sqlite file, one connection owned by",
            "the store process; a NIF connection belongs",
            "to the process that opened it"], code=True)
@@ -235,9 +237,9 @@ def components():
     d.box("b-ext", 32, 912, 600, 104, "MCL_DATA_DIR", "[environment, /data in the image]",
           ["the read model at <dir>/bookclub_observer.sqlite3;",
            "without the volume a recreate forgets everything observed"], code=True)
-    d.box("b-ext", 652, 912, 640, 104, "MCL_COOKIE", "[environment, from the operator's secrets]",
-          ["read from ~/.macula/secrets/mcl-bookclub-observer.env by the compose",
-           "file, which refuses to start without it; the node name is fixed"], code=True)
+    d.box("b-ext", 652, 912, 640, 104, "MCL_COOKIE", "[environment, supplied by the operator]",
+          ["supplied by the environment; the compose file refuses to start without it;",
+           "the node name is fixed"], code=True)
     d.box("b-ext", 32, 1044, 1260, 104, "MCL_REALM, MCL_REALM_KEY, MACULA_STATION_SEEDS, MACULA_STATION_NODE_IDS",
           "[environment, config/sys.config.src and deploy/docker-compose.yml]",
           ["read from the environment at boot; the compose file refuses to start without all four,",
