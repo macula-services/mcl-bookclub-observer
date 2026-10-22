@@ -240,7 +240,7 @@ def components():
            "file, which refuses to start without it; the node name is fixed"], code=True)
     d.box("b-ext", 32, 1044, 1260, 104, "MCL_REALM, MCL_REALM_KEY, MACULA_STATION_SEEDS, MACULA_STATION_NODE_IDS",
           "[environment, config/sys.config.src and deploy/docker-compose.yml]",
-          ["substituted by relx at boot; the compose file refuses to start without all four,",
+          ["read from the environment at boot; the compose file refuses to start without all four,",
            "so a half-configured node never announces itself where nobody can attribute it"], code=True)
     # The wiring between the boxes.
     d.edge("M492 190H432V272"); d.text("t-rel", 440, 240, "capabilities/0 names it")
