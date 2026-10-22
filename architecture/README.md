@@ -5,7 +5,7 @@ is made of, without reading it.*
 
 **Status: first version, end to end.** A storeless mesh service: it declares three
 subscriptions, folds every fact it receives into one sqlite read model through a
-listener and a policy per fact kind, and serves one procedure,
+listener and a policy per fact kind, and serves one procedure of its own,
 `mcl-bookclub-observer/get_scoreboard`, which answers locally and then verifies
 each club over the mesh. It owns no event store and dispatches no command.
 
