@@ -62,9 +62,9 @@
 <text class="t-desc" x="508" y="162">the three topic triples mcl_om wires</text>
 <text class="t-desc" x="508" y="178">into its supervised pubsub tree</text>
 <text class="t-desc" x="972" y="130">mcl_om:boot/1 wires the mesh,</text>
-<text class="t-desc" x="972" y="148">the realm identity, capabilities,</text>
-<text class="t-desc" x="972" y="166">health and the declared</text>
-<text class="t-desc" x="972" y="184">subscriptions, then starts the service.</text>
+<text class="t-desc" x="972" y="148">the realm identity and the adverts</text>
+<text class="t-desc" x="972" y="166">capabilities/0 returns, health and</text>
+<text class="t-desc" x="972" y="184">the declared subscriptions.</text>
 <rect class="b-sys" x="32" y="272" width="340" height="136" rx="10"/>
 <text class="t-code" x="48" y="300">mcl_bookclub_observer_get_scoreboard</text>
 <text class="t-type" x="48" y="318">[macula_response provider]</text>
@@ -113,8 +113,8 @@
 <text class="t-code" x="48" y="764">mcl_om</text>
 <text class="t-type" x="48" y="782">[library, ~&gt; 1.4]</text>
 <text class="t-desc" x="48" y="806">boot/1: node key, realm join, QUIC pool,</text>
-<text class="t-desc" x="48" y="822">capabilities, health, subscriptions/0, and</text>
-<text class="t-desc" x="48" y="838">call_capability/5 with the advertiser pin</text>
+<text class="t-desc" x="48" y="822">health, subscriptions/0 and the adverts</text>
+<text class="t-desc" x="48" y="838">capabilities/0 returns; call_capability/5</text>
 <rect class="b-lib" x="452" y="736" width="400" height="136" rx="10"/>
 <text class="t-code" x="468" y="764">macula</text>
 <text class="t-type" x="468" y="782">[library, ~&gt; 16.0]</text>
@@ -139,9 +139,9 @@
 <text class="t-desc" x="668" y="998">the node name is fixed</text>
 <rect class="b-ext" x="32" y="1044" width="1260" height="104" rx="10"/>
 <text class="t-code" x="48" y="1072">MCL_REALM, MCL_REALM_KEY, MACULA_STATION_SEEDS, MACULA_STATION_NODE_IDS</text>
-<text class="t-type" x="48" y="1090">[environment, config/sys.config.src and deploy/docker-compose.yml]</text>
-<text class="t-desc" x="48" y="1114">read from the environment at boot; the compose file refuses to start without all four,</text>
-<text class="t-desc" x="48" y="1130">so a half-configured node never announces itself where nobody can attribute it</text>
+<text class="t-type" x="48" y="1090">[environment: realm pair via sys.config.src, station pair read by mcl_om]</text>
+<text class="t-desc" x="48" y="1114">the compose file refuses to start without all four, so a half-configured node</text>
+<text class="t-desc" x="48" y="1130">never announces itself where nobody can attribute it</text>
 <path class="edge" d="M492 190H432V272" marker-end="url(#a)"/>
 <text class="t-rel" x="440" y="240">capabilities/0 names it</text>
 <path class="edge" d="M632 212V272" marker-end="url(#a)"/>

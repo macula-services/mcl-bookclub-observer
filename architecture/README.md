@@ -7,7 +7,9 @@ is made of, without reading it.*
 subscriptions, folds every fact it receives into one sqlite read model through a
 listener and a policy per fact kind, and serves one procedure of its own,
 `mcl-bookclub-observer/get_scoreboard`, which answers locally and then verifies
-each club over the mesh. It owns no event store and dispatches no command.
+each club over the mesh. `mcl-om` adds `mcl-bookclub-observer/info` and
+`mcl-bookclub-observer/get_limits` to every service, both open, and
+`capabilities/0` is the list. It owns no event store and dispatches no command.
 
 ## Level 1: system context
 
@@ -20,7 +22,7 @@ each club over the mesh. It owns no event store and dispatches no command.
 | Service operator | Person | Deploys the release and supplies `MCL_REALM`, `MCL_REALM_KEY` and the pinned station ids |
 | mcl-bookclub | External system | The producer. Publishes the three facts and answers `mcl-bookclub/get_bookclub_by_id`, the call this service verifies with |
 | macula-realm | Macula infrastructure | Endorses the node's identity key and grants the scope `mcl-bookclub-observer`: one action and three read resources |
-| Macula stations, mesh DHT | Macula infrastructure | The pinned stations are the service's mesh entry points over QUIC; the DHT holds the advertised procedure and delivers the three fact topics |
+| Macula stations, mesh DHT | Macula infrastructure | The pinned stations are its mesh entry points over QUIC; the DHT holds its own procedure's advert and delivers the three fact topics |
 | Host disk | External system | The sqlite read model under `/data`, and the node identity key under `/etc/mcl/secrets` |
 
 Storeless by dependency list: there is no `evoq` and no `reckon_db` in
@@ -42,12 +44,12 @@ delivers after a loss.
 | `get_scoreboard` | pure query desk | `counts/0` and `clubs/0` over the store: members, books on shelf, books retired, and one row per club with its name, counts, last registration and publisher |
 | `observer_read_model_store` | `gen_server`, esqlite | One connection, owned by this process. Schema `members` and `books`. Writes are `INSERT OR REPLACE` keyed on the fact's natural key, because a fact carries no `event_id` or `version` to dedupe on |
 | `mcl_bookclub_observer_sup` | supervisor, `one_for_one` | One child, `observer_read_model_store`, started before anything reads it. The mesh subscribers are not here: `mcl_om` supervises those from `subscriptions/0` |
-| `mcl_om` | library, `~> 1.4` | `boot/1`: node key, realm join, QUIC pool, capability registration, health, the `subscriptions/0` wiring, and `call_capability/5` with the advertiser pin the verification uses |
+| `mcl_om` | library, `~> 1.4` | `boot/1`: node key, realm join, QUIC pool, health, the `subscriptions/0` wiring, the adverts `capabilities/0` returns, and `call_capability/5` with the advertiser pin the verification uses |
 | `macula` | library, `~> 16.0` | QUIC transport and the subscriber that receives a fact |
 | `esqlite` | library, `~> 0.9` | One sqlite file, one connection owned by the store process; a NIF connection belongs to the process that opened it |
 | `MCL_DATA_DIR` | environment | `/data` in the image. The read model is `<dir>/bookclub_observer.sqlite3`; without the volume a recreate forgets everything observed |
 | `MCL_COOKIE` | environment | Supplied by the environment; the compose file refuses to start without it |
-| `MCL_REALM`, `MCL_REALM_KEY`, `MACULA_STATION_SEEDS`, `MACULA_STATION_NODE_IDS` | environment | Substituted by relx at boot. The compose file refuses to start without all four, so a half-configured node never announces itself |
+| `MCL_REALM`, `MCL_REALM_KEY`, `MACULA_STATION_SEEDS`, `MACULA_STATION_NODE_IDS` | environment | The realm pair comes in through `config/sys.config.src`, which relx substitutes at boot; the station pair is read from the environment by `mcl_om` itself. The compose file refuses to start without all four, so a half-configured node never announces itself |
 
 The three topics are pinned by a test to the strings `mcl_bookclub_facts` builds
 on the producer side, so a topic change on either side of the wire is a failing

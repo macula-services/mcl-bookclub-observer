@@ -67,7 +67,7 @@
 <text class="t-desc" x="381" y="256">Storeless: no event store, no</text>
 <text class="t-desc" x="381" y="272">command. Subscribes to three fact</text>
 <text class="t-desc" x="381" y="288">topics, folds them into one sqlite</text>
-<text class="t-desc" x="381" y="304">read model, and serves one</text>
+<text class="t-desc" x="381" y="304">read model, and serves its own</text>
 <text class="t-desc" x="381" y="320">procedure on the mesh</text>
 <rect class="b-ext" x="40" y="400" width="270" height="136" rx="10"/>
 <text class="t-name" x="56" y="428">mcl-bookclub</text>
@@ -87,7 +87,7 @@
 <text class="t-name" x="706" y="428">Macula stations, mesh DHT</text>
 <text class="t-type" x="706" y="446">[Macula infrastructure]</text>
 <text class="t-desc" x="706" y="470">Pinned stations are the mesh entry</text>
-<text class="t-desc" x="706" y="486">(QUIC); the DHT holds the advertised</text>
+<text class="t-desc" x="706" y="486">(QUIC); the DHT holds its own</text>
 <text class="t-desc" x="706" y="502">procedure and delivers the three</text>
 <text class="t-desc" x="706" y="518">fact topics</text>
 <rect class="b-ext" x="40" y="560" width="270" height="120" rx="10"/>

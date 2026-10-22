@@ -40,10 +40,13 @@ The **policy** is where the wire shape is unwrapped, with
 `mcl_om_wire:field/2`, and where the admit/supersede decision is made: the
 retired-book rule is the reason it is its own module.
 
-The one capability, `mcl-bookclub-observer/get_scoreboard`, answers from the
+Its own procedure, `mcl-bookclub-observer/get_scoreboard`, answers from the
 local read model and then **verifies the bookclub over the mesh** by calling
 `mcl-bookclub/get_bookclub_by_id` for the last club observed — a live
-cross-service call on every answer, reported as `bookclub_verified`.
+cross-service call on every answer, reported as `bookclub_verified`. Beyond it
+`mcl-om` adds `mcl-bookclub-observer/info` and
+`mcl-bookclub-observer/get_limits` to every service, both open, and
+`capabilities/0` is the list.
 
 ## Why it exists
 

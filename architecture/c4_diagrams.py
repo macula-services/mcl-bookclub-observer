@@ -141,7 +141,7 @@ def context():
            "pinned station ids"], person=True)
     d.box("b-sys", 365, 186, 270, 152, "mcl-bookclub-observer", "[mcl_om mesh service, own box]",
           ["Storeless: no event store, no", "command. Subscribes to three fact",
-           "topics, folds them into one sqlite", "read model, and serves one",
+           "topics, folds them into one sqlite", "read model, and serves its own",
            "procedure on the mesh"])
     d.box("b-ext", 40, 400, 270, 136, "mcl-bookclub", "[External system, on the mesh]",
           ["The producer. Publishes the three", "facts and answers",
@@ -150,7 +150,7 @@ def context():
           ["Endorses the node's identity key", "and grants the scope",
            "mcl-bookclub-observer: one action,", "three read resources"])
     d.box("b-mac", 690, 400, 270, 136, "Macula stations, mesh DHT", "[Macula infrastructure]",
-          ["Pinned stations are the mesh entry", "(QUIC); the DHT holds the advertised",
+          ["Pinned stations are the mesh entry", "(QUIC); the DHT holds its own",
            "procedure and delivers the three", "fact topics"])
     d.box("b-ext", 40, 560, 270, 120, "Host disk", "[External system]",
           ["The sqlite read model at /data,", "and the node key under",
@@ -183,9 +183,9 @@ def components():
            "the three topic triples mcl_om wires",
            "into its supervised pubsub tree"], code=True)
     d.text("t-desc", 972, 130, "mcl_om:boot/1 wires the mesh,")
-    d.text("t-desc", 972, 148, "the realm identity, capabilities,")
-    d.text("t-desc", 972, 166, "health and the declared")
-    d.text("t-desc", 972, 184, "subscriptions, then starts the service.")
+    d.text("t-desc", 972, 148, "the realm identity and the adverts")
+    d.text("t-desc", 972, 166, "capabilities/0 returns, health and")
+    d.text("t-desc", 972, 184, "the declared subscriptions.")
     # Row 2: the mesh face, the ingest path, the policies.
     d.box("b-sys", 32, 272, 340, 136, "mcl_bookclub_observer_get_scoreboard", "[macula_response provider]",
           ["Answers from the local read model, then",
@@ -223,8 +223,8 @@ def components():
     d.text("t-desc", 32, 720, "The libraries the release links:")
     d.box("b-lib", 32, 736, 400, 136, "mcl_om", "[library, ~> 1.4]",
           ["boot/1: node key, realm join, QUIC pool,",
-           "capabilities, health, subscriptions/0, and",
-           "call_capability/5 with the advertiser pin"], code=True)
+           "health, subscriptions/0 and the adverts",
+           "capabilities/0 returns; call_capability/5"], code=True)
     d.box("b-lib", 452, 736, 400, 136, "macula", "[library, ~> 16.0]",
           ["QUIC transport and the subscriber that",
            "receives a fact; the advertiser-pinned",
@@ -241,9 +241,9 @@ def components():
           ["supplied by the environment; the compose file refuses to start without it;",
            "the node name is fixed"], code=True)
     d.box("b-ext", 32, 1044, 1260, 104, "MCL_REALM, MCL_REALM_KEY, MACULA_STATION_SEEDS, MACULA_STATION_NODE_IDS",
-          "[environment, config/sys.config.src and deploy/docker-compose.yml]",
-          ["read from the environment at boot; the compose file refuses to start without all four,",
-           "so a half-configured node never announces itself where nobody can attribute it"], code=True)
+          "[environment: realm pair via sys.config.src, station pair read by mcl_om]",
+          ["the compose file refuses to start without all four, so a half-configured node",
+           "never announces itself where nobody can attribute it"], code=True)
     # The wiring between the boxes.
     d.edge("M492 190H432V272"); d.text("t-rel", 440, 240, "capabilities/0 names it")
     d.edge("M632 212V272"); d.text("t-rel", 640, 246, "subscriptions/0 wires the three")
