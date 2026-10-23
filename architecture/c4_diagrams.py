@@ -245,7 +245,7 @@ def components():
           ["the compose file refuses to start without all four, so a half-configured node",
            "never announces itself where nobody can attribute it"], code=True)
     # The wiring between the boxes.
-    d.edge("M492 190H332V272"); d.text("t-rel", 440, 240, "capabilities/0 names it")
+    d.edge("M492 190H400V240H332V272"); d.text("t-rel", 408, 232, "capabilities/0 names it")
     d.edge("M632 212V272"); d.text("t-rel", 640, 246, "subscriptions/0 wires the three")
     d.edge("M832 340H952"); d.text("t-rel", 892, 332, "hands it the fact", anchor="middle")
     d.edge("M212 408V468"); d.text("t-rel", 220, 442, "answers from the rows")

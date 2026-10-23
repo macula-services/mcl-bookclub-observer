@@ -142,8 +142,8 @@
 <text class="t-type" x="48" y="1090">[environment: realm pair in sys.config.src, seeds and node ids via mcl_om]</text>
 <text class="t-desc" x="48" y="1114">the compose file refuses to start without all four, so a half-configured node</text>
 <text class="t-desc" x="48" y="1130">never announces itself where nobody can attribute it</text>
-<path class="edge" d="M492 190H332V272" marker-end="url(#a)"/>
-<text class="t-rel" x="440" y="240">capabilities/0 names it</text>
+<path class="edge" d="M492 190H400V240H332V272" marker-end="url(#a)"/>
+<text class="t-rel" x="408" y="232">capabilities/0 names it</text>
 <path class="edge" d="M632 212V272" marker-end="url(#a)"/>
 <text class="t-rel" x="640" y="246">subscriptions/0 wires the three</text>
 <path class="edge" d="M832 340H952" marker-end="url(#a)"/>
