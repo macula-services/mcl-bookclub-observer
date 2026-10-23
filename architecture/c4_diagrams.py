@@ -139,7 +139,7 @@ def context():
     d.box("b-per", 690, 30, 270, 120, "Service operator", "[Person]",
           ["Deploys the release and supplies", "MCL_REALM, MCL_REALM_KEY and the",
            "pinned station ids"], person=True)
-    d.box("b-sys", 365, 186, 270, 152, "mcl-bookclub-observer", "[mcl_om mesh service, own box]",
+    d.box("b-sys", 365, 186, 270, 152, "mcl-bookclub-observer", "[mcl_om mesh service]",
           ["Storeless: no event store, no", "command. Subscribes to three fact",
            "topics, folds them into one sqlite", "read model, and serves its own",
            "procedure on the mesh"])
@@ -156,7 +156,7 @@ def context():
           ["The sqlite read model at /data,", "and the node key under",
            "/etc/mcl/secrets"])
     d.edge("M175 150V176H400V186"); d.text("t-rel", 183, 170, "calls get_scoreboard")
-    d.edge("M825 134V176H620V186"); d.text("t-rel", 690, 170, "deploys; sets the realm, stations")
+    d.edge("M825 134V176H620V186"); d.text("t-rel", 690, 170, "deploys; sets the env")
     d.edge("M440 338V380H175V400")
     d.text("t-rel", 190, 356, "calls get_bookclub_by_id,")
     d.text("t-rel", 190, 372, "pinned to the publisher")
@@ -245,7 +245,7 @@ def components():
           ["the compose file refuses to start without all four, so a half-configured node",
            "never announces itself where nobody can attribute it"], code=True)
     # The wiring between the boxes.
-    d.edge("M492 190H432V272"); d.text("t-rel", 440, 240, "capabilities/0 names it")
+    d.edge("M492 190H332V272"); d.text("t-rel", 440, 240, "capabilities/0 names it")
     d.edge("M632 212V272"); d.text("t-rel", 640, 246, "subscriptions/0 wires the three")
     d.edge("M832 340H952"); d.text("t-rel", 892, 332, "hands it the fact", anchor="middle")
     d.edge("M212 408V468"); d.text("t-rel", 220, 442, "answers from the rows")

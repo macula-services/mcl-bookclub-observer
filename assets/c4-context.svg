@@ -63,7 +63,7 @@
 <text class="t-desc" x="706" y="132">pinned station ids</text>
 <rect class="b-sys" x="365" y="186" width="270" height="152" rx="10"/>
 <text class="t-name" x="381" y="214">mcl-bookclub-observer</text>
-<text class="t-type" x="381" y="232">[mcl_om mesh service, own box]</text>
+<text class="t-type" x="381" y="232">[mcl_om mesh service]</text>
 <text class="t-desc" x="381" y="256">Storeless: no event store, no</text>
 <text class="t-desc" x="381" y="272">command. Subscribes to three fact</text>
 <text class="t-desc" x="381" y="288">topics, folds them into one sqlite</text>
@@ -99,7 +99,7 @@
 <path class="edge" d="M175 150V176H400V186" marker-end="url(#a)"/>
 <text class="t-rel" x="183" y="170">calls get_scoreboard</text>
 <path class="edge" d="M825 134V176H620V186" marker-end="url(#a)"/>
-<text class="t-rel" x="690" y="170">deploys; sets the realm, stations</text>
+<text class="t-rel" x="690" y="170">deploys; sets the env</text>
 <path class="edge" d="M440 338V380H175V400" marker-end="url(#a)"/>
 <text class="t-rel" x="190" y="356">calls get_bookclub_by_id,</text>
 <text class="t-rel" x="190" y="372">pinned to the publisher</text>
