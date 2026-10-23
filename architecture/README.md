@@ -17,12 +17,12 @@ each club over the mesh. `mcl-om` adds `mcl-bookclub-observer/info` and
 
 | Element | Kind | Role |
 | --- | --- | --- |
-| mcl-bookclub-observer | In scope | Subscribes to three fact topics, folds them into one sqlite read model, and serves `mcl-bookclub-observer/get_scoreboard` on the mesh. `/health` is on a Unix socket |
+| mcl-bookclub-observer | In scope | Subscribes to the fact topics, folds them into one sqlite read model, and serves `mcl-bookclub-observer/get_scoreboard` on the mesh. `/health` is on a Unix socket |
 | Mesh consumer | Person | Another service or app on the mesh that calls the scoreboard and reads the counts, clubs and verification verdicts |
 | Service operator | Person | Deploys the release and supplies `MCL_REALM`, `MCL_REALM_KEY` and the pinned station ids |
 | mcl-bookclub | External system | The producer. Publishes the three facts and answers `mcl-bookclub/get_bookclub_by_id`, the call this service verifies with |
-| macula-realm | Macula infrastructure | Endorses the node's identity key and grants the scope `mcl-bookclub-observer`: one action and three read resources |
-| Macula stations, mesh DHT | Macula infrastructure | The pinned stations are its mesh entry points over QUIC; the DHT holds its own procedure's advert and delivers the three fact topics |
+| macula-realm | Macula infrastructure | Endorses the node's identity key and grants the scope `mcl-bookclub-observer` for its action and its read resources |
+| Macula stations, mesh DHT | Macula infrastructure | The pinned stations are its mesh entry points over QUIC; the DHT holds its own procedure's advert and delivers its fact topics |
 | Host disk | External system | The sqlite read model under `/data`, and the node identity key under `/etc/mcl/secrets` |
 
 Storeless by dependency list: there is no `evoq` and no `reckon_db` in
@@ -49,7 +49,7 @@ delivers after a loss.
 | `esqlite` | library, `~> 0.9` | One sqlite file, one connection owned by the store process; a NIF connection belongs to the process that opened it |
 | `MCL_DATA_DIR` | environment | `/data` in the image. The read model is `<dir>/bookclub_observer.sqlite3`; without the volume a recreate forgets everything observed |
 | `MCL_COOKIE` | environment | Supplied by the environment; the compose file refuses to start without it |
-| `MCL_REALM`, `MCL_REALM_KEY`, `MACULA_STATION_SEEDS`, `MACULA_STATION_NODE_IDS` | environment | The realm pair comes in through `config/sys.config.src`, which relx substitutes at boot; the station pair is read from the environment by `mcl_om` itself. The compose file refuses to start without all four, so a half-configured node never announces itself |
+| `MCL_REALM`, `MCL_REALM_KEY`, `MACULA_STATION_SEEDS`, `MACULA_STATION_NODE_IDS` | environment | The realm pair comes in through `config/sys.config.src`, which relx substitutes at boot; the station seeds and node ids are read from the environment by `mcl_om` itself. The compose file refuses to start without all four, so a half-configured node never announces itself |
 
 The three topics are pinned by a test to the strings `mcl_bookclub_facts` builds
 on the producer side, so a topic change on either side of the wire is a failing

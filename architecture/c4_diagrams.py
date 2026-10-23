@@ -148,10 +148,10 @@ def context():
            "mcl-bookclub/get_bookclub_by_id,", "the call this service verifies with"])
     d.box("b-mac", 365, 400, 270, 136, "macula-realm", "[Macula infrastructure]",
           ["Endorses the node's identity key", "and grants the scope",
-           "mcl-bookclub-observer: one action,", "three read resources"])
+           "mcl-bookclub-observer for its action", "and its read resources"])
     d.box("b-mac", 690, 400, 270, 136, "Macula stations, mesh DHT", "[Macula infrastructure]",
           ["Pinned stations are the mesh entry", "(QUIC); the DHT holds its own",
-           "procedure and delivers the three", "fact topics"])
+           "procedure and delivers its", "fact topics"])
     d.box("b-ext", 40, 560, 270, 120, "Host disk", "[External system]",
           ["The sqlite read model at /data,", "and the node key under",
            "/etc/mcl/secrets"])
@@ -161,7 +161,7 @@ def context():
     d.text("t-rel", 190, 356, "calls get_bookclub_by_id,")
     d.text("t-rel", 190, 372, "pinned to the publisher")
     d.edge("M540 340V400"); d.text("t-rel", 532, 370, "boot claim, scope", anchor="end")
-    d.edge("M620 338V380H825V400"); d.text("t-rel", 635, 372, "subscribes to three facts, advertises one")
+    d.edge("M620 338V380H825V400"); d.text("t-rel", 635, 372, "subscribes to the facts; advertises its own")
     d.edge("M365 300H340V620H310")
     d.text("t-rel", 330, 480, "keeps the read model", anchor="middle", rotate=-90)
     d.text("t-desc", 40, 712, "Storeless by dependency list: no evoq and no reckon-db, so no command can be dispatched and no event log is")
@@ -241,7 +241,7 @@ def components():
           ["supplied by the environment; the compose file refuses to start without it;",
            "the node name is fixed"], code=True)
     d.box("b-ext", 32, 1044, 1260, 104, "MCL_REALM, MCL_REALM_KEY, MACULA_STATION_SEEDS, MACULA_STATION_NODE_IDS",
-          "[environment: realm pair via sys.config.src, station pair read by mcl_om]",
+          "[environment: realm pair in sys.config.src, seeds and node ids via mcl_om]",
           ["the compose file refuses to start without all four, so a half-configured node",
            "never announces itself where nobody can attribute it"], code=True)
     # The wiring between the boxes.

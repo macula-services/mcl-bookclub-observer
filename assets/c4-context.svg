@@ -81,14 +81,14 @@
 <text class="t-type" x="381" y="446">[Macula infrastructure]</text>
 <text class="t-desc" x="381" y="470">Endorses the node's identity key</text>
 <text class="t-desc" x="381" y="486">and grants the scope</text>
-<text class="t-desc" x="381" y="502">mcl-bookclub-observer: one action,</text>
-<text class="t-desc" x="381" y="518">three read resources</text>
+<text class="t-desc" x="381" y="502">mcl-bookclub-observer for its action</text>
+<text class="t-desc" x="381" y="518">and its read resources</text>
 <rect class="b-mac" x="690" y="400" width="270" height="136" rx="10"/>
 <text class="t-name" x="706" y="428">Macula stations, mesh DHT</text>
 <text class="t-type" x="706" y="446">[Macula infrastructure]</text>
 <text class="t-desc" x="706" y="470">Pinned stations are the mesh entry</text>
 <text class="t-desc" x="706" y="486">(QUIC); the DHT holds its own</text>
-<text class="t-desc" x="706" y="502">procedure and delivers the three</text>
+<text class="t-desc" x="706" y="502">procedure and delivers its</text>
 <text class="t-desc" x="706" y="518">fact topics</text>
 <rect class="b-ext" x="40" y="560" width="270" height="120" rx="10"/>
 <text class="t-name" x="56" y="588">Host disk</text>
@@ -106,7 +106,7 @@
 <path class="edge" d="M540 340V400" marker-end="url(#a)"/>
 <text class="t-rel" x="532" y="370" text-anchor="end">boot claim, scope</text>
 <path class="edge" d="M620 338V380H825V400" marker-end="url(#a)"/>
-<text class="t-rel" x="635" y="372">subscribes to three facts, advertises one</text>
+<text class="t-rel" x="635" y="372">subscribes to the facts; advertises its own</text>
 <path class="edge" d="M365 300H340V620H310" marker-end="url(#a)"/>
 <text class="t-rel" x="330" y="480" text-anchor="middle" transform="rotate(-90 330 480)">keeps the read model</text>
 <text class="t-desc" x="40" y="712">Storeless by dependency list: no evoq and no reckon-db, so no command can be dispatched and no event log is</text>

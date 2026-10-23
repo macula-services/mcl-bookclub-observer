@@ -21,8 +21,8 @@ and serves a scoreboard over the mesh.**
 
 Where [mcl-bookclub](https://github.com/macula-services/mcl-bookclub) is the
 producer — events, projections, emitters — this service is the consumer. It
-owns no reckon-db store and never dispatches a command: it watches three fact
-topics and answers one question ("what has the bookclub been up to?").
+owns no reckon-db store and never dispatches a command: it watches the fact
+topics and answers its question ("what has the bookclub been up to?").
 
 ## What it does
 
@@ -42,8 +42,9 @@ retired-book rule is the reason it is its own module.
 
 Its own procedure, `mcl-bookclub-observer/get_scoreboard`, answers from the
 local read model and then **verifies the bookclub over the mesh** by calling
-`mcl-bookclub/get_bookclub_by_id` for the last club observed — a live
-cross-service call on every answer, reported as `bookclub_verified`. Beyond it
+`mcl-bookclub/get_bookclub_by_id` for every club the answer names, which
+`get_scoreboard.erl` verifies one by one — a live cross-service call on every
+answer, reported as `bookclub_verified`. Beyond it
 `mcl-om` adds `mcl-bookclub-observer/info` and
 `mcl-bookclub-observer/get_limits` to every service, both open, and
 `capabilities/0` is the list.
