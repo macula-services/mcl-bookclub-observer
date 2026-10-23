@@ -25,6 +25,8 @@ services:
       # observed is forgotten on every recreate. On a bulk drive.
       - ${MCL_BOOKCLUB_OBSERVER_DATA:-/bulk0/mcl-bookclub-observer}:/data
     labels:
+      # Only meaningful to an operator whose own tooling recreates a container
+      # when a new image appears; nothing in this repository reads it.
       - "com.centurylinklabs.watchtower.enable=true"
     environment:
       - MCL_REALM=${MCL_REALM:?set MCL_REALM to the 64-hex realm tag}

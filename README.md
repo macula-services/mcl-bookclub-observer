@@ -21,8 +21,8 @@ and serves a scoreboard over the mesh.**
 
 Where [mcl-bookclub](https://github.com/macula-services/mcl-bookclub) is the
 producer — events, projections, emitters — this service is the consumer. It
-owns no reckon-db store and never dispatches a command: it watches three fact
-topics and answers one question ("what has the bookclub been up to?").
+owns no reckon-db store and never dispatches a command: it watches the fact
+topics and answers its question ("what has the bookclub been up to?").
 
 ## What it does
 
@@ -34,15 +34,20 @@ topics and answers one question ("what has the bookclub been up to?").
 
 Each fact goes through the three-module shape from mcl_om's
 `guides/read_model_services.md`: a **listener** (a `macula_subscriber`, wired
-by `subscriptions/0`) unwraps the wire payload and hands it to a **policy**
-(the admit/supersede decision — the retired-book one is the reason the
-policy is its own module), which hands it to the **read model** (one sqlite
-file, absolute idempotent writes).
+by `subscriptions/0`) hands the payload to a **policy**, then writes the
+decision to the **read model** (one sqlite file, absolute idempotent writes).
+The **policy** is where the wire shape is unwrapped, with
+`mcl_om_wire:field/2`, and where the admit/supersede decision is made: the
+retired-book rule is the reason it is its own module.
 
-The one capability, `mcl-bookclub-observer/get_scoreboard`, answers from the
+Its own procedure, `mcl-bookclub-observer/get_scoreboard`, answers from the
 local read model and then **verifies the bookclub over the mesh** by calling
-`mcl-bookclub/get_bookclub_by_id` for the last club observed — a live
-cross-service call on every answer, reported as `bookclub_verified`.
+`mcl-bookclub/get_bookclub_by_id` for every club the answer names, which
+`get_scoreboard.erl` verifies one by one — a live cross-service call on every
+answer, reported as `bookclub_verified`. Beyond it
+`mcl-om` adds `mcl-bookclub-observer/info` and
+`mcl-bookclub-observer/get_limits` to every service, both open, and
+`capabilities/0` is the list.
 
 ## Why it exists
 
@@ -76,6 +81,5 @@ another release. Building the image: `podman build -t mcl-bookclub-observer
 
 `config/sys.config.src` carries the realm, its trust anchor and the PQ
 profile; `deploy/docker-compose.yml` is runnable as-is (`MCL_REALM`,
-`MCL_REALM_KEY`, station seeds, and `MCL_COOKIE` from
-`~/.macula/secrets/mcl-bookclub-observer.env`). The read model lives on the
-`/data` volume.
+`MCL_REALM_KEY`, station seeds, and `MCL_COOKIE` from the environment). The
+read model lives on the `/data` volume.

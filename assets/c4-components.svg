@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1340 1220" role="img" aria-label="mcl-bookclub-observer components">
+<title>mcl-bookclub-observer components</title>
+<style>
+.t-name { font-family: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 700; }
+.t-desc { font-family: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif; font-size: 12.5px; }
+.t-rel { font-family: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif; font-size: 11.5px; paint-order: stroke; stroke-width: 4px; stroke-linejoin: round; }
+.t-code { font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; font-size: 13px; font-weight: 600; }
+.t-type { font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; font-size: 11.5px; }
+.t-bound { font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; font-size: 12px; font-weight: 600; }
+.t-leg { font-family: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif; font-size: 12px; }
+.edge { fill: none; stroke-width: 1.25; }
+.edge-later { fill: none; stroke-width: 1.25; stroke-dasharray: 5 4; }
+.bg { fill: #FFFFFF; }
+.b-sys { fill: #F5E9CC; stroke: #A56F0A; stroke-width: 2; }
+.b-per { fill: #E3EBF2; stroke: #3B5B7A; stroke-width: 1.25; }
+.b-mac { fill: #E6E4EE; stroke: #5E5A78; stroke-width: 1.25; }
+.b-lib { fill: #E7F0E8; stroke: #4A7A55; stroke-width: 1.25; }
+.b-ext { fill: #ECEFED; stroke: #8A9791; stroke-width: 1.25; }
+.b-cmp { fill: #FFFFFF; stroke: #8A9791; stroke-width: 1.25; }
+.b-later { fill: none; stroke: #8A9791; stroke-width: 1.25; stroke-dasharray: 5 4; }
+.bound { fill: none; stroke: #B3BDB8; stroke-width: 1; }
+.head { fill: #3B5B7A; }
+.t-name, .t-code { fill: #16201D; }
+.t-type, .t-bound, .t-leg { fill: #66736E; }
+.t-desc { fill: #34413C; }
+.t-rel { fill: #66736E; stroke: #FFFFFF; }
+.edge, .edge-later { stroke: #8A9791; }
+.arrowhead { fill: #8A9791; }
+@media (prefers-color-scheme: dark) {
+.bg { fill: #171F1C; }
+.b-sys { fill: #3A2E13; stroke: #E3AA3C; }
+.b-per { fill: #1D2A36; stroke: #8EB4D8; }
+.b-mac { fill: #26243A; stroke: #A9A4C8; }
+.b-lib { fill: #1A241C; stroke: #8FBE9B; }
+.b-ext { fill: #1C2421; stroke: #7D8B85; }
+.b-cmp { fill: #171F1C; stroke: #7D8B85; }
+.b-later { stroke: #7D8B85; }
+.bound { stroke: #4A5752; }
+.head { fill: #8EB4D8; }
+.t-name, .t-code { fill: #E6ECE9; }
+.t-type, .t-bound, .t-leg { fill: #93A09A; }
+.t-desc { fill: #C3CDC8; }
+.t-rel { fill: #93A09A; stroke: #171F1C; }
+.edge, .edge-later { stroke: #7D8B85; }
+.arrowhead { fill: #7D8B85; }
+}
+</style>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrowhead" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="bg" x="0" y="0" width="1340" height="1220"/>
+<rect class="bound" x="16" y="40" width="1292" height="640" rx="12"/>
+<text class="t-bound" x="32" y="62">mcl-bookclub-observer [Container] - one OTP release, one app</text>
+<rect class="b-cmp" x="32" y="76" width="340" height="136" rx="10"/>
+<text class="t-code" x="48" y="104">mcl_bookclub_observer_app</text>
+<text class="t-type" x="48" y="122">[OTP application]</text>
+<text class="t-desc" x="48" y="146">One call: mcl_om:boot/1 with the service</text>
+<text class="t-desc" x="48" y="162">module. No store is opened here, because</text>
+<text class="t-desc" x="48" y="178">there is no store to open</text>
+<rect class="b-sys" x="492" y="76" width="340" height="136" rx="10"/>
+<text class="t-code" x="508" y="104">mcl_bookclub_observer_service</text>
+<text class="t-type" x="508" y="122">[mcl_om_service behaviour]</text>
+<text class="t-desc" x="508" y="146">The six callbacks, plus subscriptions/0:</text>
+<text class="t-desc" x="508" y="162">the three topic triples mcl_om wires</text>
+<text class="t-desc" x="508" y="178">into its supervised pubsub tree</text>
+<text class="t-desc" x="972" y="130">mcl_om:boot/1 wires the mesh,</text>
+<text class="t-desc" x="972" y="148">the realm identity and the adverts</text>
+<text class="t-desc" x="972" y="166">capabilities/0 returns, health and</text>
+<text class="t-desc" x="972" y="184">the declared subscriptions.</text>
+<rect class="b-sys" x="32" y="272" width="340" height="136" rx="10"/>
+<text class="t-code" x="48" y="300">mcl_bookclub_observer_get_scoreboard</text>
+<text class="t-type" x="48" y="318">[macula_response provider]</text>
+<text class="t-desc" x="48" y="342">Answers from the local read model, then</text>
+<text class="t-desc" x="48" y="358">verifies each club by calling the</text>
+<text class="t-desc" x="48" y="374">bookclub, pinned to the fact's publisher</text>
+<rect class="b-cmp" x="492" y="272" width="340" height="136" rx="10"/>
+<text class="t-code" x="508" y="300">ingest_member_registered</text>
+<text class="t-type" x="508" y="318">[macula_subscriber, three modules]</text>
+<text class="t-desc" x="508" y="342">with ingest_book_procured and</text>
+<text class="t-desc" x="508" y="358">ingest_book_retired: hand the payload</text>
+<text class="t-desc" x="508" y="374">to the policy, then write its decision</text>
+<rect class="b-cmp" x="952" y="272" width="340" height="136" rx="10"/>
+<text class="t-code" x="968" y="300">on_book_procured_fact_maybe_record</text>
+<text class="t-type" x="968" y="318">[policy, three modules]</text>
+<text class="t-desc" x="968" y="342">with on_member_registered_ and</text>
+<text class="t-desc" x="968" y="358">on_book_retired_ fact_maybe_record:</text>
+<text class="t-desc" x="968" y="374">unwrap with mcl_om_wire:field/2,</text>
+<text class="t-desc" x="968" y="390">then decide admit or supersede</text>
+<rect class="b-cmp" x="32" y="468" width="340" height="180" rx="10"/>
+<text class="t-code" x="48" y="496">get_scoreboard</text>
+<text class="t-type" x="48" y="514">[pure query desk]</text>
+<text class="t-desc" x="48" y="538">counts/0 and clubs/0 over the store:</text>
+<text class="t-desc" x="48" y="554">members, books on shelf, books retired,</text>
+<text class="t-desc" x="48" y="570">and one row per club with its name,</text>
+<text class="t-desc" x="48" y="586">counts, last registration and the</text>
+<text class="t-desc" x="48" y="602">publisher's node id</text>
+<rect class="b-cmp" x="492" y="468" width="340" height="180" rx="10"/>
+<text class="t-code" x="508" y="496">observer_read_model_store</text>
+<text class="t-type" x="508" y="514">[gen_server, esqlite]</text>
+<text class="t-desc" x="508" y="538">One connection, owned by this process.</text>
+<text class="t-desc" x="508" y="554">Schema: members and books. Writes are</text>
+<text class="t-desc" x="508" y="570">INSERT OR REPLACE keyed on the fact's</text>
+<text class="t-desc" x="508" y="586">natural key, because a fact carries no</text>
+<text class="t-desc" x="508" y="602">event_id or version to dedupe on</text>
+<rect class="b-cmp" x="952" y="468" width="340" height="180" rx="10"/>
+<text class="t-code" x="968" y="496">mcl_bookclub_observer_sup</text>
+<text class="t-type" x="968" y="514">[supervisor, one_for_one]</text>
+<text class="t-desc" x="968" y="538">One child, observer_read_model_store,</text>
+<text class="t-desc" x="968" y="554">started before anything reads it.</text>
+<text class="t-desc" x="968" y="570">The mesh subscribers are not here:</text>
+<text class="t-desc" x="968" y="586">mcl_om supervises those from</text>
+<text class="t-desc" x="968" y="602">subscriptions/0</text>
+<text class="t-desc" x="32" y="720">The libraries the release links:</text>
+<rect class="b-lib" x="32" y="736" width="400" height="136" rx="10"/>
+<text class="t-code" x="48" y="764">mcl_om</text>
+<text class="t-type" x="48" y="782">[library, ~&gt; 1.4]</text>
+<text class="t-desc" x="48" y="806">boot/1: node key, realm join, QUIC pool,</text>
+<text class="t-desc" x="48" y="822">health, subscriptions/0 and the adverts</text>
+<text class="t-desc" x="48" y="838">capabilities/0 returns; call_capability/5</text>
+<rect class="b-lib" x="452" y="736" width="400" height="136" rx="10"/>
+<text class="t-code" x="468" y="764">macula</text>
+<text class="t-type" x="468" y="782">[library, ~&gt; 16.0]</text>
+<text class="t-desc" x="468" y="806">QUIC transport and the subscriber that</text>
+<text class="t-desc" x="468" y="822">receives a fact; the advertiser-pinned</text>
+<text class="t-desc" x="468" y="838">call is mcl_om:call_capability/5</text>
+<rect class="b-lib" x="872" y="736" width="400" height="136" rx="10"/>
+<text class="t-code" x="888" y="764">esqlite</text>
+<text class="t-type" x="888" y="782">[library, ~&gt; 0.9]</text>
+<text class="t-desc" x="888" y="806">one sqlite file, one connection owned by</text>
+<text class="t-desc" x="888" y="822">the store process; a NIF connection belongs</text>
+<text class="t-desc" x="888" y="838">to the process that opened it</text>
+<rect class="b-ext" x="32" y="912" width="600" height="104" rx="10"/>
+<text class="t-code" x="48" y="940">MCL_DATA_DIR</text>
+<text class="t-type" x="48" y="958">[environment, /data in the image]</text>
+<text class="t-desc" x="48" y="982">the read model at &lt;dir&gt;/bookclub_observer.sqlite3;</text>
+<text class="t-desc" x="48" y="998">without the volume a recreate forgets everything observed</text>
+<rect class="b-ext" x="652" y="912" width="640" height="104" rx="10"/>
+<text class="t-code" x="668" y="940">MCL_COOKIE</text>
+<text class="t-type" x="668" y="958">[environment, supplied by the operator]</text>
+<text class="t-desc" x="668" y="982">supplied by the environment; the compose file refuses to start without it;</text>
+<text class="t-desc" x="668" y="998">the node name is fixed</text>
+<rect class="b-ext" x="32" y="1044" width="1260" height="104" rx="10"/>
+<text class="t-code" x="48" y="1072">MCL_REALM, MCL_REALM_KEY, MACULA_STATION_SEEDS, MACULA_STATION_NODE_IDS</text>
+<text class="t-type" x="48" y="1090">[environment: realm pair in sys.config.src, seeds and node ids via mcl_om]</text>
+<text class="t-desc" x="48" y="1114">the compose file refuses to start without all four, so a half-configured node</text>
+<text class="t-desc" x="48" y="1130">never announces itself where nobody can attribute it</text>
+<path class="edge" d="M492 190H400V240H332V272" marker-end="url(#a)"/>
+<text class="t-rel" x="408" y="232">capabilities/0 names it</text>
+<path class="edge" d="M632 212V272" marker-end="url(#a)"/>
+<text class="t-rel" x="640" y="246">subscriptions/0 wires the three</text>
+<path class="edge" d="M832 340H952" marker-end="url(#a)"/>
+<text class="t-rel" x="892" y="332" text-anchor="middle">hands it the fact</text>
+<path class="edge" d="M212 408V468" marker-end="url(#a)"/>
+<text class="t-rel" x="220" y="442">answers from the rows</text>
+<path class="edge" d="M632 408V468" marker-end="url(#a)"/>
+<text class="t-rel" x="624" y="442" text-anchor="end">records what it admitted</text>
+<path class="edge" d="M1000 408V436H700V468" marker-end="url(#a)"/>
+<text class="t-rel" x="720" y="430">consults book_status</text>
+<path class="edge" d="M372 560H492" marker-end="url(#a)"/>
+<text class="t-rel" x="432" y="552" text-anchor="middle">reads the rows</text>
+<path class="edge" d="M952 560H832" marker-end="url(#a)"/>
+<text class="t-rel" x="892" y="552" text-anchor="middle">one child</text>
+<rect class="b-sys" x="24" y="1180" width="22" height="14" rx="3"/>
+<text class="t-leg" x="54" y="1192">In scope</text>
+<rect class="b-per" x="110.8" y="1180" width="22" height="14" rx="3"/>
+<text class="t-leg" x="140.8" y="1192">Person</text>
+<rect class="b-mac" x="184.39999999999998" y="1180" width="22" height="14" rx="3"/>
+<text class="t-leg" x="214.39999999999998" y="1192">Macula infrastructure</text>
+<rect class="b-lib" x="357.0" y="1180" width="22" height="14" rx="3"/>
+<text class="t-leg" x="387.0" y="1192">Library</text>
+<rect class="b-ext" x="437.2" y="1180" width="22" height="14" rx="3"/>
+<text class="t-leg" x="467.2" y="1192">External system</text>
+<rect class="b-cmp" x="570.2" y="1180" width="22" height="14" rx="3"/>
+<text class="t-leg" x="600.2" y="1192">Container or component</text>
+<rect class="bound" x="749.4000000000001" y="1180" width="22" height="14" rx="3"/>
+<text class="t-leg" x="779.4000000000001" y="1192">Boundary</text>
+</svg>
