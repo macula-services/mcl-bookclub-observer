@@ -83,3 +83,13 @@ another release. Building the image: `podman build -t mcl-bookclub-observer
 profile; `deploy/docker-compose.yml` is runnable as-is (`MCL_REALM`,
 `MCL_REALM_KEY`, station seeds, and `MCL_COOKIE` from the environment). The
 read model lives on the `/data` volume.
+
+## Architecture
+
+The C4 model is in [architecture/README.md](architecture/README.md), with its
+diagrams drawn by `architecture/c4_diagrams.py` into `assets/`. Change the
+script, run it (`python3 architecture/c4_diagrams.py`), and look at the result
+before committing.
+
+![mcl-bookclub-observer system context](assets/c4-context.svg)
+
