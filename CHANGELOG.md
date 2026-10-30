@@ -7,6 +7,17 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## Unreleased
 
+- **On mcl_om 1.6 and macula 18, and a subscription now says who may deliver
+  to it.** `mcl_om` moves to `~> 1.6` and `macula` to `~> 18.0`; 18 still
+  speaks wire 1.0, so this service still talks to every wire 1.0 box. What it
+  brings is a refusal at boot, not a default (macula-io/macula#147): a
+  subscription that names no `sources` is refused, naming the topic, before
+  the service starts. The three declarations now carry `sources => members` —
+  any publisher the realm admitted, which is what the bookclub's own emitter
+  is. Not `{org, _}`, because nothing in this mesh presents an org key yet,
+  and not the `{open, Reason}` opt-out, which would admit a publisher from
+  outside the realm. The service's one capability already names
+  `auth => open`, which macula 18 now requires rather than assumes.
 - **macula is declared, at 16** (macula-codebase-checks#4, #14). The
   service called macula modules and compiled against `macula_response`
   without declaring the application: it arrived transitively through

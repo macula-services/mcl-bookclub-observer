@@ -63,10 +63,21 @@ identity_spec() ->
 %% is mcl_bookclub_facts in macula-services/mcl-bookclub (the emitter side);
 %% a test pins the three so a topic change on either side of the wire is a
 %% failing test somewhere, not a silent unsubscription.
+%%
+%% WHO MAY DELIVER: `members' -- any publisher the realm admitted, which is
+%% what the bookclub's own emitter is. macula 18 has no default (macula#147)
+%% and mcl_om refuses a declaration that names none, so the decision is
+%% written here rather than inferred from a missing key. It is not `{org, _}'
+%% because nothing in this mesh presents an org key yet, and not
+%% `{open, _}' because that is the opt-out, which would admit a publisher
+%% from outside the realm.
 subscriptions() ->
-    [{<<"io.macula/mcl-bookclub/bookclub/member/member_registered_v1">>,
-      ingest_member_registered, []},
-     {<<"io.macula/mcl-bookclub/bookclub/book/book_procured_v1">>,
-      ingest_book_procured, []},
-     {<<"io.macula/mcl-bookclub/bookclub/book/book_retired_v1">>,
-      ingest_book_retired, []}].
+    [#{topic => <<"io.macula/mcl-bookclub/bookclub/member/member_registered_v1">>,
+       module => ingest_member_registered,
+       sources => members},
+     #{topic => <<"io.macula/mcl-bookclub/bookclub/book/book_procured_v1">>,
+       module => ingest_book_procured,
+       sources => members},
+     #{topic => <<"io.macula/mcl-bookclub/bookclub/book/book_retired_v1">>,
+       module => ingest_book_retired,
+       sources => members}].

@@ -83,7 +83,7 @@ identity_spec_has_the_shape_mcl_om_expects_test() ->
 authority_matches_what_is_announced_and_subscribed_test() ->
     #{actions := Actions, resources := Resources} = ?SERVICE:identity_spec(),
     ?assertEqual([<<"get_scoreboard">>], Actions),
-    Topics = [Topic || {Topic, _, _} <- ?SERVICE:subscriptions()],
+    Topics = [Topic || #{topic := Topic} <- ?SERVICE:subscriptions()],
     ?assertEqual(Resources, [topic_resource(T) || T <- Topics]),
     ?assertEqual(length(Actions), length(?SERVICE:capabilities())).
 
@@ -92,13 +92,24 @@ authority_matches_what_is_announced_and_subscribed_test() ->
 %% topic change on either side of the wire must be a failing test
 %% somewhere, not a silent unsubscription.
 the_subscribed_topics_are_the_bookclub_s_published_topics_test() ->
-    ?assertEqual([{<<"io.macula/mcl-bookclub/bookclub/member/member_registered_v1">>,
-                   ingest_member_registered, []},
-                  {<<"io.macula/mcl-bookclub/bookclub/book/book_procured_v1">>,
-                   ingest_book_procured, []},
-                  {<<"io.macula/mcl-bookclub/bookclub/book/book_retired_v1">>,
-                   ingest_book_retired, []}],
+    ?assertEqual([#{topic => <<"io.macula/mcl-bookclub/bookclub/member/member_registered_v1">>,
+                    module => ingest_member_registered,
+                    sources => members},
+                  #{topic => <<"io.macula/mcl-bookclub/bookclub/book/book_procured_v1">>,
+                    module => ingest_book_procured,
+                    sources => members},
+                  #{topic => <<"io.macula/mcl-bookclub/bookclub/book/book_retired_v1">>,
+                    module => ingest_book_retired,
+                    sources => members}],
                  ?SERVICE:subscriptions()).
+
+%% WHO MAY DELIVER IS PART OF THE DECLARATION, not a default (macula 18,
+%% macula#147; mcl-om 1.6). Pinned separately from the topics so that
+%% loosening one subscription to `open' is a failing test here, not a quiet
+%% word change in the service module.
+every_subscription_names_its_sources_test() ->
+    ?assertEqual([members, members, members],
+                 [Sources || #{sources := Sources} <- ?SERVICE:subscriptions()]).
 
 %% The observer is storeless BY CONSTRUCTION: no reckon/evoq dep exists to
 %% import, and no store callback exists to trigger the store wiring. This
