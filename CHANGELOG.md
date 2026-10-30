@@ -5,20 +5,28 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 0.4.0 - 2026-10-30
 
-- **On mcl_om 1.6 and macula 18, and a subscription now says who may deliver
-  to it.** `mcl_om` moves to `~> 1.6` and `macula` to `~> 18.0`; 18 still
+- **On mcl_om 1.6 and macula 18, and this service now writes down both caller
+  rules.** `mcl_om` moves to `~> 1.6` and `macula` to `~> 18.0`; 18 still
   speaks wire 1.0, so this service still talks to every wire 1.0 box. What it
-  brings is a refusal at boot, not a default (macula-io/macula#147): a
-  subscription that names no `sources` is refused, naming the topic, before
-  the service starts. The three declarations now carry `sources => members` —
-  any publisher the realm admitted, which is what the bookclub's own emitter
-  is. Not `{org, _}`, because nothing in this mesh presents an org key yet,
-  and not the `{open, Reason}` opt-out, which would admit a publisher from
-  outside the realm. The service's one capability already names
-  `auth => open`, which macula 18 now requires rather than assumes.
-- **macula is declared, at 16** (macula-codebase-checks#4, #14). The
+  brings is two refusals at boot, not two defaults (macula-io/macula#147), and
+  this release is the one that satisfies both:
+
+  | Rule | Before | Now |
+  | --- | --- | --- |
+  | who may CALL a capability with a handler | unspecified = served open | required; `get_scoreboard` declares `auth => open` |
+  | who may DELIVER to a subscription | unspecified = accepted | required; all three declare `sources => members` |
+
+  `members` is any publisher the realm admitted, which is what the bookclub's
+  own emitter is. Not `{org, _}`, because nothing in this mesh presents an org
+  key yet — pinning one would make the observer deaf rather than safe — and
+  not the `{open, Reason}` opt-out, which would admit a publisher from outside
+  the realm. A subscription that names no source is now refused, naming the
+  topic, before the service starts.
+- **macula is declared** (macula-codebase-checks#4, #14), landed in main
+  before this release and shipped by it; the versions below are the ones it
+  landed with, and the entry above supersedes them. The
   service called macula modules and compiled against `macula_response`
   without declaring the application: it arrived transitively through
   `mcl_om`, so a rebuild took whatever major the newest mcl_om carried.

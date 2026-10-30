@@ -16,7 +16,7 @@
 
 info() ->
     #{name => <<"mcl-bookclub-observer">>,
-      version => <<"0.3.0">>,
+      version => <<"0.4.0">>,
       description => <<"A scoreboard over mcl-bookclub's published facts.">>}.
 
 start(_Opts) -> mcl_bookclub_observer_sup:start_link().
